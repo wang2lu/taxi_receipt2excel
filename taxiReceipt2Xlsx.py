@@ -58,7 +58,7 @@ def get_ocr_result(parameter,base64_images, name):
     return response_list
 
 #save the result to xlsx file
-#the formatmy of my xlsx is like my_temple.png	
+#the formatmy of my xlsx is like excel.png	
 def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
     wb = load_workbook(xlsx_file)
     ws = wb['sheet1']
