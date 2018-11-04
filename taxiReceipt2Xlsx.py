@@ -11,13 +11,12 @@ __author__ = 'lulu wang'
 __author_email__ = 'gzgzemail@sina.com'
 __version__ = '0.1.1dev'
 
-
 import json
 import base64
 import requests
+import os
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidation
-
 
 #to call the OCR-API, one must sign in BaiduYun,get related access_token and session_key
 #you can find the tutorial in http://ai.baidu.com/forum/topic/show/867951
@@ -27,15 +26,26 @@ def get_token_key(token_key_dir):
     with open(token_key_dir,"rb") as f:
         parameter = json.loads(f.read())
     return parameter
-	
+
+#images_dir is the dir where taxi-receipts located
+#image type must in ("PNG、JPG、JPEG、BMP" )
+#return each image's path
+def get_images(images_dir):
+    images=[] 
+    for root, dirs, files in os.walk(images_dir):
+        for file in files:
+            if (os.path.splitext(file)[1]).lower() in ['.jpeg','.png','.jpg','.bmp']:
+                images.append(os.path.join(root, file))
+    return images
+
 #the receipt image must base64 encoded
-#images_name is a list of image file("PNG、JPG、JPEG、BMP" )
-#images_dir is the dir where the images located
+#images_dir is the dir where the taxi-receipts located
 #return the base64 encoded image
-def image_encode(images_name, images_dir): 
+def image_encode(images_dir):
+    images_name = get_images(images_dir)
     base64_images = []
     for name in images_name:
-        with open("%s/%s"%(images_dir, name),"rb") as f:
+        with open(name,"rb") as f:
             image_data = f.read()
             base64_images.append(base64.b64encode(image_data))  
     return base64_images
@@ -58,7 +68,7 @@ def get_ocr_result(parameter,base64_images, name):
     return response_list
 
 #save the result to xlsx file
-#the formatmy of my xlsx is like excel.png	
+#the format of my xlsx is as excel.png shows
 def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
     wb = load_workbook(xlsx_file)
     ws = wb['sheet1']
@@ -73,19 +83,19 @@ def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
         c6.value = response_list[index][5]
         index += 1
     wb.save(xlsx_file)
-	print('ok!')
+    print('ok!')
 	
 if __name__=="__main__":
     token_key_dir = "F:/tmp/params.txt"
     parameter = get_token_key(token_key_dir)
     images_name = ["timg.jpg"]
     images_dir = "F:/OCR/images"
-    image_data = image_encode(images_name, images_dir)
+    image_data = image_encode(images_dir)
     name = "张三2"
     response_list = get_ocr_result(parameter,image_data,name)
     xlsx_file = 'F:/tmp/test.xlsx'
     start_row = 4
     start_column = 'B'
-    end_row = len(response_list)+Start_row-1
+    end_row = len(response_list)+start_row-1
     end_column = 'G'
     save2xlsx(xlsx_file,start_row, start_column, end_row, end_column)
