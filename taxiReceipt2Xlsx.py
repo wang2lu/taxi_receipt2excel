@@ -17,6 +17,7 @@ import requests
 import os
 from openpyxl import load_workbook
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.styles import Alignment
 
 #to call the OCR-API, one must sign in BaiduYun,get related access_token and session_key
 #you can find the tutorial in http://ai.baidu.com/forum/topic/show/867951
@@ -70,6 +71,7 @@ def get_ocr_result(parameter,base64_images, name):
 #save the result to xlsx file
 #the format of my xlsx is as excel.png shows
 def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
+    al = Alignment(horizontal="center", vertical="center")
     wb = load_workbook(xlsx_file)
     ws = wb['sheet1']
     cells = ws["%s%d"%(start_column,start_row):"%s%d"%(end_column,end_row)]
@@ -81,6 +83,9 @@ def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
         c4.value = response_list[index][3]
         c5.value = response_list[index][4]
         c6.value = response_list[index][5]
+        c1.alignment = al
+        c2.alignment = al
+        c6.alignment = al
         index += 1
     wb.save(xlsx_file)
     print('ok!')
