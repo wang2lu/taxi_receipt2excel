@@ -70,7 +70,7 @@ def get_ocr_result(parameter,base64_images, name):
 
 #save the result to xlsx file
 #the format of my xlsx is as excel.png shows
-def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
+def save2xlsx(response_list, xlsx_file, start_row, start_column, end_row, end_column):
     al = Alignment(horizontal="center", vertical="center")
     wb = load_workbook(xlsx_file)
     ws = wb['sheet1']
@@ -93,14 +93,13 @@ def save2xlsx(xlsx_file, start_row, start_column, end_row, end_column):
 if __name__=="__main__":
     token_key_dir = "F:/tmp/params.txt"
     parameter = get_token_key(token_key_dir)
-    images_name = ["timg.jpg"]
     images_dir = "F:/OCR/images"
     image_data = image_encode(images_dir)
-    name = "张三2"
+    name = "张三"
     response_list = get_ocr_result(parameter,image_data,name)
     xlsx_file = 'F:/tmp/test.xlsx'
     start_row = 4
     start_column = 'B'
     end_row = len(response_list)+start_row-1
     end_column = 'G'
-    save2xlsx(xlsx_file,start_row, start_column, end_row, end_column)
+    save2xlsx(response_list,xlsx_file,start_row, start_column, end_row, end_column)
