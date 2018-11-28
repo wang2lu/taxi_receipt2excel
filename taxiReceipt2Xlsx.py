@@ -64,7 +64,7 @@ def get_ocr_result(parameter,base64_images, name):
         if response.status_code==200:
             time = result['words_result']['Time'].split('-')[0]
             date = result['words_result']['Date']
-            fare = result['words_result']['Fare'][1:]
+            fare = round(float(result['words_result']['Fare'][1:6]))+int(result['words_result']['FuelOilSurcharge'][1])
             response_list.append([date, name,None, None, None, fare])
     return response_list
 
